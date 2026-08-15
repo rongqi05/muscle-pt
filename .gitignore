@@ -32,3 +32,7 @@ checkpoints/*
 *.sh
 Kinesis/*
 UniPhys/*
+# Isaac Lab 源码(运行时依赖,非本仓库内容)
+IsaacLab/
+# 调试日志
+MUJOCO_LOG.TXT
