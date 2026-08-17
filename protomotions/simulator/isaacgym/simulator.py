@@ -67,13 +67,10 @@ class IsaacGymSimulator(Simulator):
 
         self.muscle_ctl = None
         if self.robot_config.asset.robot_type == 'act_humanoid':
-            import mujoco
             rig_path = os.path.join(self.robot_config.asset.asset_root, self.robot_config.asset.asset_file_name)
             muscle_path = os.path.join('protomotions/data/assets/muscle284.xml')
-            self.muscle_ctl = MuscleController(muscle_xml_path=muscle_path, device=self.device, mujoco=mujoco, rig_path=rig_path)
-            normal_body_names = self.robot_config.body_names
-            self.muscle_ctl.prepare_mapping(list(normal_body_names))
-            self.muscle_ctl.prepare_dof_geometry(self.robot_config.dof_names)
+            self.muscle_ctl = MuscleController(muscle_xml_path=muscle_path, device=self.device, rig_path=rig_path)
+            self.muscle_ctl.prepare(self.robot_config.body_names, self.robot_config.dof_names)
 
         # if running with a viewer, set up keyboard shortcuts and camera
         if not self.headless:

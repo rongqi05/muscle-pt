@@ -1,0 +1,715 @@
+motions:
+- file: cmu_bio_npy/009/09_12.npy
+  fps: 30.0
+  idx: 0
+  sub_motions:
+  - idx: 0
+    weight: 1.0
+- file: cmu_bio_npy/091/91_02.npy
+  fps: 30.0
+  idx: 1
+  sub_motions:
+  - idx: 1
+    weight: 1.0
+- file: cmu_bio_npy/091/91_04.npy
+  fps: 30.0
+  idx: 2
+  sub_motions:
+  - idx: 2
+    weight: 1.0
+- file: cmu_bio_npy/091/91_05.npy
+  fps: 30.0
+  idx: 3
+  sub_motions:
+  - idx: 3
+    weight: 1.0
+- file: cmu_bio_npy/091/91_10.npy
+  fps: 30.0
+  idx: 4
+  sub_motions:
+  - idx: 4
+    weight: 1.0
+- file: cmu_bio_npy/091/91_11.npy
+  fps: 30.0
+  idx: 5
+  sub_motions:
+  - idx: 5
+    weight: 1.0
+- file: cmu_bio_npy/091/91_12.npy
+  fps: 30.0
+  idx: 6
+  sub_motions:
+  - idx: 6
+    weight: 1.0
+- file: cmu_bio_npy/091/91_13.npy
+  fps: 30.0
+  idx: 7
+  sub_motions:
+  - idx: 7
+    weight: 1.0
+- file: cmu_bio_npy/091/91_14.npy
+  fps: 30.0
+  idx: 8
+  sub_motions:
+  - idx: 8
+    weight: 1.0
+- file: cmu_bio_npy/091/91_15.npy
+  fps: 30.0
+  idx: 9
+  sub_motions:
+  - idx: 9
+    weight: 1.0
+- file: cmu_bio_npy/091/91_17.npy
+  fps: 30.0
+  idx: 10
+  sub_motions:
+  - idx: 10
+    weight: 1.0
+- file: cmu_bio_npy/091/91_18.npy
+  fps: 30.0
+  idx: 11
+  sub_motions:
+  - idx: 11
+    weight: 1.0
+- file: cmu_bio_npy/091/91_20.npy
+  fps: 30.0
+  idx: 12
+  sub_motions:
+  - idx: 12
+    weight: 1.0
+- file: cmu_bio_npy/091/91_21.npy
+  fps: 30.0
+  idx: 13
+  sub_motions:
+  - idx: 13
+    weight: 1.0
+- file: cmu_bio_npy/091/91_22.npy
+  fps: 30.0
+  idx: 14
+  sub_motions:
+  - idx: 14
+    weight: 1.0
+- file: cmu_bio_npy/091/91_24.npy
+  fps: 30.0
+  idx: 15
+  sub_motions:
+  - idx: 15
+    weight: 1.0
+- file: cmu_bio_npy/091/91_25.npy
+  fps: 30.0
+  idx: 16
+  sub_motions:
+  - idx: 16
+    weight: 1.0
+- file: cmu_bio_npy/091/91_26.npy
+  fps: 30.0
+  idx: 17
+  sub_motions:
+  - idx: 17
+    weight: 1.0
+- file: cmu_bio_npy/091/91_27.npy
+  fps: 30.0
+  idx: 18
+  sub_motions:
+  - idx: 18
+    weight: 1.0
+- file: cmu_bio_npy/091/91_28.npy
+  fps: 30.0
+  idx: 19
+  sub_motions:
+  - idx: 19
+    weight: 1.0
+- file: cmu_bio_npy/091/91_29.npy
+  fps: 30.0
+  idx: 20
+  sub_motions:
+  - idx: 20
+    weight: 1.0
+- file: cmu_bio_npy/091/91_30.npy
+  fps: 30.0
+  idx: 21
+  sub_motions:
+  - idx: 21
+    weight: 1.0
+- file: cmu_bio_npy/091/91_31.npy
+  fps: 30.0
+  idx: 22
+  sub_motions:
+  - idx: 22
+    weight: 1.0
+- file: cmu_bio_npy/091/91_32.npy
+  fps: 30.0
+  idx: 23
+  sub_motions:
+  - idx: 23
+    weight: 1.0
+- file: cmu_bio_npy/091/91_33.npy
+  fps: 30.0
+  idx: 24
+  sub_motions:
+  - idx: 24
+    weight: 1.0
+- file: cmu_bio_npy/091/91_34.npy
+  fps: 30.0
+  idx: 25
+  sub_motions:
+  - idx: 25
+    weight: 1.0
+- file: cmu_bio_npy/091/91_35.npy
+  fps: 30.0
+  idx: 26
+  sub_motions:
+  - idx: 26
+    weight: 1.0
+- file: cmu_bio_npy/091/91_36.npy
+  fps: 30.0
+  idx: 27
+  sub_motions:
+  - idx: 27
+    weight: 1.0
+- file: cmu_bio_npy/091/91_57.npy
+  fps: 30.0
+  idx: 28
+  sub_motions:
+  - idx: 28
+    weight: 1.0
+- file: cmu_bio_npy/091/91_62.npy
+  fps: 30.0
+  idx: 29
+  sub_motions:
+  - idx: 29
+    weight: 1.0
+- file: cmu_bio_npy/035/35_01.npy
+  fps: 30.0
+  idx: 30
+  sub_motions:
+  - idx: 30
+    weight: 1.0
+- file: cmu_bio_npy/035/35_02.npy
+  fps: 30.0
+  idx: 31
+  sub_motions:
+  - idx: 31
+    weight: 1.0
+- file: cmu_bio_npy/035/35_03.npy
+  fps: 30.0
+  idx: 32
+  sub_motions:
+  - idx: 32
+    weight: 1.0
+- file: cmu_bio_npy/035/35_04.npy
+  fps: 30.0
+  idx: 33
+  sub_motions:
+  - idx: 33
+    weight: 1.0
+- file: cmu_bio_npy/035/35_05.npy
+  fps: 30.0
+  idx: 34
+  sub_motions:
+  - idx: 34
+    weight: 1.0
+- file: cmu_bio_npy/035/35_06.npy
+  fps: 30.0
+  idx: 35
+  sub_motions:
+  - idx: 35
+    weight: 1.0
+- file: cmu_bio_npy/035/35_07.npy
+  fps: 30.0
+  idx: 36
+  sub_motions:
+  - idx: 36
+    weight: 1.0
+- file: cmu_bio_npy/035/35_08.npy
+  fps: 30.0
+  idx: 37
+  sub_motions:
+  - idx: 37
+    weight: 1.0
+- file: cmu_bio_npy/035/35_09.npy
+  fps: 30.0
+  idx: 38
+  sub_motions:
+  - idx: 38
+    weight: 1.0
+- file: cmu_bio_npy/035/35_10.npy
+  fps: 30.0
+  idx: 39
+  sub_motions:
+  - idx: 39
+    weight: 1.0
+- file: cmu_bio_npy/035/35_11.npy
+  fps: 30.0
+  idx: 40
+  sub_motions:
+  - idx: 40
+    weight: 1.0
+- file: cmu_bio_npy/035/35_12.npy
+  fps: 30.0
+  idx: 41
+  sub_motions:
+  - idx: 41
+    weight: 1.0
+- file: cmu_bio_npy/035/35_13.npy
+  fps: 30.0
+  idx: 42
+  sub_motions:
+  - idx: 42
+    weight: 1.0
+- file: cmu_bio_npy/035/35_14.npy
+  fps: 30.0
+  idx: 43
+  sub_motions:
+  - idx: 43
+    weight: 1.0
+- file: cmu_bio_npy/035/35_15.npy
+  fps: 30.0
+  idx: 44
+  sub_motions:
+  - idx: 44
+    weight: 1.0
+- file: cmu_bio_npy/035/35_16.npy
+  fps: 30.0
+  idx: 45
+  sub_motions:
+  - idx: 45
+    weight: 1.0
+- file: cmu_bio_npy/035/35_28.npy
+  fps: 30.0
+  idx: 46
+  sub_motions:
+  - idx: 46
+    weight: 1.0
+- file: cmu_bio_npy/035/35_29.npy
+  fps: 30.0
+  idx: 47
+  sub_motions:
+  - idx: 47
+    weight: 1.0
+- file: cmu_bio_npy/035/35_30.npy
+  fps: 30.0
+  idx: 48
+  sub_motions:
+  - idx: 48
+    weight: 1.0
+- file: cmu_bio_npy/035/35_31.npy
+  fps: 30.0
+  idx: 49
+  sub_motions:
+  - idx: 49
+    weight: 1.0
+- file: cmu_bio_npy/035/35_32.npy
+  fps: 30.0
+  idx: 50
+  sub_motions:
+  - idx: 50
+    weight: 1.0
+- file: cmu_bio_npy/035/35_33.npy
+  fps: 30.0
+  idx: 51
+  sub_motions:
+  - idx: 51
+    weight: 1.0
+- file: cmu_bio_npy/035/35_34.npy
+  fps: 30.0
+  idx: 52
+  sub_motions:
+  - idx: 52
+    weight: 1.0
+- file: cmu_bio_npy/104/104_02.npy
+  fps: 30.0
+  idx: 53
+  sub_motions:
+  - idx: 53
+    weight: 1.0
+- file: cmu_bio_npy/104/104_03.npy
+  fps: 30.0
+  idx: 54
+  sub_motions:
+  - idx: 54
+    weight: 1.0
+- file: cmu_bio_npy/104/104_11.npy
+  fps: 30.0
+  idx: 55
+  sub_motions:
+  - idx: 55
+    weight: 1.0
+- file: cmu_bio_npy/104/104_12.npy
+  fps: 30.0
+  idx: 56
+  sub_motions:
+  - idx: 56
+    weight: 1.0
+- file: cmu_bio_npy/104/104_13.npy
+  fps: 30.0
+  idx: 57
+  sub_motions:
+  - idx: 57
+    weight: 1.0
+- file: cmu_bio_npy/104/104_14.npy
+  fps: 30.0
+  idx: 58
+  sub_motions:
+  - idx: 58
+    weight: 1.0
+- file: cmu_bio_npy/104/104_16.npy
+  fps: 30.0
+  idx: 59
+  sub_motions:
+  - idx: 59
+    weight: 1.0
+- file: cmu_bio_npy/104/104_19.npy
+  fps: 30.0
+  idx: 60
+  sub_motions:
+  - idx: 60
+    weight: 1.0
+- file: cmu_bio_npy/104/104_22.npy
+  fps: 30.0
+  idx: 61
+  sub_motions:
+  - idx: 61
+    weight: 1.0
+- file: cmu_bio_npy/104/104_27.npy
+  fps: 30.0
+  idx: 62
+  sub_motions:
+  - idx: 62
+    weight: 1.0
+- file: cmu_bio_npy/104/104_28.npy
+  fps: 30.0
+  idx: 63
+  sub_motions:
+  - idx: 63
+    weight: 1.0
+- file: cmu_bio_npy/104/104_29.npy
+  fps: 30.0
+  idx: 64
+  sub_motions:
+  - idx: 64
+    weight: 1.0
+- file: cmu_bio_npy/104/104_30.npy
+  fps: 30.0
+  idx: 65
+  sub_motions:
+  - idx: 65
+    weight: 1.0
+- file: cmu_bio_npy/104/104_32.npy
+  fps: 30.0
+  idx: 66
+  sub_motions:
+  - idx: 66
+    weight: 1.0
+- file: cmu_bio_npy/104/104_35.npy
+  fps: 30.0
+  idx: 67
+  sub_motions:
+  - idx: 67
+    weight: 1.0
+- file: cmu_bio_npy/104/104_36.npy
+  fps: 30.0
+  idx: 68
+  sub_motions:
+  - idx: 68
+    weight: 1.0
+- file: cmu_bio_npy/104/104_39.npy
+  fps: 30.0
+  idx: 69
+  sub_motions:
+  - idx: 69
+    weight: 1.0
+- file: cmu_bio_npy/104/104_41.npy
+  fps: 30.0
+  idx: 70
+  sub_motions:
+  - idx: 70
+    weight: 1.0
+- file: cmu_bio_npy/104/104_42.npy
+  fps: 30.0
+  idx: 71
+  sub_motions:
+  - idx: 71
+    weight: 1.0
+- file: cmu_bio_npy/104/104_43.npy
+  fps: 30.0
+  idx: 72
+  sub_motions:
+  - idx: 72
+    weight: 1.0
+- file: cmu_bio_npy/104/104_44.npy
+  fps: 30.0
+  idx: 73
+  sub_motions:
+  - idx: 73
+    weight: 1.0
+- file: cmu_bio_npy/104/104_45.npy
+  fps: 30.0
+  idx: 74
+  sub_motions:
+  - idx: 74
+    weight: 1.0
+- file: cmu_bio_npy/104/104_46.npy
+  fps: 30.0
+  idx: 75
+  sub_motions:
+  - idx: 75
+    weight: 1.0
+- file: cmu_bio_npy/105/105_01.npy
+  fps: 30.0
+  idx: 76
+  sub_motions:
+  - idx: 76
+    weight: 1.0
+- file: cmu_bio_npy/105/105_02.npy
+  fps: 30.0
+  idx: 77
+  sub_motions:
+  - idx: 77
+    weight: 1.0
+- file: cmu_bio_npy/105/105_03.npy
+  fps: 30.0
+  idx: 78
+  sub_motions:
+  - idx: 78
+    weight: 1.0
+- file: cmu_bio_npy/105/105_05.npy
+  fps: 30.0
+  idx: 79
+  sub_motions:
+  - idx: 79
+    weight: 1.0
+- file: cmu_bio_npy/105/105_09.npy
+  fps: 30.0
+  idx: 80
+  sub_motions:
+  - idx: 80
+    weight: 1.0
+- file: cmu_bio_npy/105/105_10.npy
+  fps: 30.0
+  idx: 81
+  sub_motions:
+  - idx: 81
+    weight: 1.0
+- file: cmu_bio_npy/105/105_11.npy
+  fps: 30.0
+  idx: 82
+  sub_motions:
+  - idx: 82
+    weight: 1.0
+- file: cmu_bio_npy/105/105_12.npy
+  fps: 30.0
+  idx: 83
+  sub_motions:
+  - idx: 83
+    weight: 1.0
+- file: cmu_bio_npy/105/105_13.npy
+  fps: 30.0
+  idx: 84
+  sub_motions:
+  - idx: 84
+    weight: 1.0
+- file: cmu_bio_npy/105/105_14.npy
+  fps: 30.0
+  idx: 85
+  sub_motions:
+  - idx: 85
+    weight: 1.0
+- file: cmu_bio_npy/105/105_15.npy
+  fps: 30.0
+  idx: 86
+  sub_motions:
+  - idx: 86
+    weight: 1.0
+- file: cmu_bio_npy/105/105_17.npy
+  fps: 30.0
+  idx: 87
+  sub_motions:
+  - idx: 87
+    weight: 1.0
+- file: cmu_bio_npy/105/105_18.npy
+  fps: 30.0
+  idx: 88
+  sub_motions:
+  - idx: 88
+    weight: 1.0
+- file: cmu_bio_npy/105/105_20.npy
+  fps: 30.0
+  idx: 89
+  sub_motions:
+  - idx: 89
+    weight: 1.0
+- file: cmu_bio_npy/105/105_21.npy
+  fps: 30.0
+  idx: 90
+  sub_motions:
+  - idx: 90
+    weight: 1.0
+- file: cmu_bio_npy/105/105_22.npy
+  fps: 30.0
+  idx: 91
+  sub_motions:
+  - idx: 91
+    weight: 1.0
+- file: cmu_bio_npy/105/105_23.npy
+  fps: 30.0
+  idx: 92
+  sub_motions:
+  - idx: 92
+    weight: 1.0
+- file: cmu_bio_npy/105/105_24.npy
+  fps: 30.0
+  idx: 93
+  sub_motions:
+  - idx: 93
+    weight: 1.0
+- file: cmu_bio_npy/105/105_25.npy
+  fps: 30.0
+  idx: 94
+  sub_motions:
+  - idx: 94
+    weight: 1.0
+- file: cmu_bio_npy/105/105_26.npy
+  fps: 30.0
+  idx: 95
+  sub_motions:
+  - idx: 95
+    weight: 1.0
+- file: cmu_bio_npy/105/105_27.npy
+  fps: 30.0
+  idx: 96
+  sub_motions:
+  - idx: 96
+    weight: 1.0
+- file: cmu_bio_npy/105/105_28.npy
+  fps: 30.0
+  idx: 97
+  sub_motions:
+  - idx: 97
+    weight: 1.0
+- file: cmu_bio_npy/105/105_29.npy
+  fps: 30.0
+  idx: 98
+  sub_motions:
+  - idx: 98
+    weight: 1.0
+- file: cmu_bio_npy/105/105_30.npy
+  fps: 30.0
+  idx: 99
+  sub_motions:
+  - idx: 99
+    weight: 1.0
+- file: cmu_bio_npy/105/105_31.npy
+  fps: 30.0
+  idx: 100
+  sub_motions:
+  - idx: 100
+    weight: 1.0
+- file: cmu_bio_npy/105/105_32.npy
+  fps: 30.0
+  idx: 101
+  sub_motions:
+  - idx: 101
+    weight: 1.0
+- file: cmu_bio_npy/105/105_33.npy
+  fps: 30.0
+  idx: 102
+  sub_motions:
+  - idx: 102
+    weight: 1.0
+- file: cmu_bio_npy/105/105_34.npy
+  fps: 30.0
+  idx: 103
+  sub_motions:
+  - idx: 103
+    weight: 1.0
+- file: cmu_bio_npy/105/105_35.npy
+  fps: 30.0
+  idx: 104
+  sub_motions:
+  - idx: 104
+    weight: 1.0
+- file: cmu_bio_npy/105/105_36.npy
+  fps: 30.0
+  idx: 105
+  sub_motions:
+  - idx: 105
+    weight: 1.0
+- file: cmu_bio_npy/105/105_57.npy
+  fps: 30.0
+  idx: 106
+  sub_motions:
+  - idx: 106
+    weight: 1.0
+- file: cmu_bio_npy/105/105_62.npy
+  fps: 30.0
+  idx: 107
+  sub_motions:
+  - idx: 107
+    weight: 1.0
+- file: cmu_bio_npy/008/08_01.npy
+  fps: 30.0
+  idx: 108
+  sub_motions:
+  - idx: 108
+    weight: 1.0
+- file: cmu_bio_npy/008/08_02.npy
+  fps: 30.0
+  idx: 109
+  sub_motions:
+  - idx: 109
+    weight: 1.0
+- file: cmu_bio_npy/008/08_03.npy
+  fps: 30.0
+  idx: 110
+  sub_motions:
+  - idx: 110
+    weight: 1.0
+- file: cmu_bio_npy/008/08_04.npy
+  fps: 30.0
+  idx: 111
+  sub_motions:
+  - idx: 111
+    weight: 1.0
+- file: cmu_bio_npy/008/08_05.npy
+  fps: 30.0
+  idx: 112
+  sub_motions:
+  - idx: 112
+    weight: 1.0
+- file: cmu_bio_npy/008/08_06.npy
+  fps: 30.0
+  idx: 113
+  sub_motions:
+  - idx: 113
+    weight: 1.0
+- file: cmu_bio_npy/008/08_07.npy
+  fps: 30.0
+  idx: 114
+  sub_motions:
+  - idx: 114
+    weight: 1.0
+- file: cmu_bio_npy/008/08_08.npy
+  fps: 30.0
+  idx: 115
+  sub_motions:
+  - idx: 115
+    weight: 1.0
+- file: cmu_bio_npy/008/08_09.npy
+  fps: 30.0
+  idx: 116
+  sub_motions:
+  - idx: 116
+    weight: 1.0
+- file: cmu_bio_npy/008/08_10.npy
+  fps: 30.0
+  idx: 117
+  sub_motions:
+  - idx: 117
+    weight: 1.0
+- file: cmu_bio_npy/008/08_11.npy
+  fps: 30.0
+  idx: 118
+  sub_motions:
+  - idx: 118
+    weight: 1.0
