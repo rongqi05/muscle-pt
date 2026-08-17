@@ -23,6 +23,23 @@ WANDB_ID="${WANDB_ID:-null}"                      # wandb run id (续训用)
 cd "$(dirname "$0")/.."                           # 进入仓库根目录
 export PYTHONPATH="$(pwd)${PYTHONPATH:+:$PYTHONPATH}"   # 仓库根加入 PYTHONPATH, 供 import protomotions
 
+# ---- 数据完整性检查: walking_bio.pt 必须是真实数据 (不是 Git LFS 指针) ----
+DATA_URL="https://github.com/rongqi05/muscle-pt/releases/download/data-v1/walking_bio.pt"
+if [ -f data/walking_bio.pt ] && head -c 100 data/walking_bio.pt | grep -q "git-lfs"; then
+  echo "检测到 data/walking_bio.pt 是 Git LFS 指针, 自动从 GitHub Release 下载真实数据..."
+  curl -L --retry 3 -o data/walking_bio.pt "$DATA_URL"
+elif [ ! -f data/walking_bio.pt ]; then
+  echo "未找到 data/walking_bio.pt, 自动从 GitHub Release 下载..."
+  curl -L --retry 3 -o data/walking_bio.pt "$DATA_URL"
+fi
+# 校验: torch.save 产物是 zip 格式, 开头为 'PK' (0x50 0x4b)
+if [ "$(head -c 2 data/walking_bio.pt | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
+  echo "错误: data/walking_bio.pt 损坏或未下载完整, 请手动执行:"
+  echo "  curl -L -o data/walking_bio.pt $DATA_URL"
+  exit 1
+fi
+echo "data/walking_bio.pt 校验通过 ($(du -h data/walking_bio.pt | cut -f1))"
+
 # ---- 激活 conda 环境 ----
 source "$HOME/miniconda3/etc/profile.d/conda.sh" 2>/dev/null \
   || source "$HOME/anaconda3/etc/profile.d/conda.sh" 2>/dev/null \
