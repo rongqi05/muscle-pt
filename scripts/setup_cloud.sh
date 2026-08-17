@@ -26,8 +26,14 @@ if ! command -v git-lfs >/dev/null 2>&1; then
 fi
 git lfs install
 
-echo "=== [2/4] 拉取 LFS 数据 (walking_bio.pt) ==="
-git lfs pull
+echo "=== [2/4] 拉取训练数据 (walking_bio.pt) ==="
+if git lfs pull; then
+  echo "LFS 拉取成功"
+else
+  echo "LFS 拉取失败 (配额/带宽问题), 改用 GitHub Release 下载..."
+  curl -L -o data/walking_bio.pt \
+    https://github.com/rongqi05/muscle-pt/releases/download/data-v1/walking_bio.pt
+fi
 
 echo "=== [3/4] 安装 ProtoMotions 依赖 (用 Isaac Lab 的 python) ==="
 "$ISAACLAB_PATH/isaaclab.sh" -p -m pip install -e .
