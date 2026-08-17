@@ -35,8 +35,9 @@ else
     https://github.com/rongqi05/muscle-pt/releases/download/data-v1/walking_bio.pt
 fi
 
-echo "=== [3/4] 安装 ProtoMotions 依赖 (用 Isaac Lab 的 python) ==="
-"$ISAACLAB_PATH/isaaclab.sh" -p -m pip install -e .
+echo "=== [3/4] 安装依赖 (用 Isaac Lab 的 python) ==="
+# 注: protomotions 包没有 setup.py/pyproject.toml, 不执行 `pip install -e .`;
+# 它靠"从仓库根目录运行"导入 (python 的 sys.path 含 cwd)。
 "$ISAACLAB_PATH/isaaclab.sh" -p -m pip install -r requirements_isaaclab.txt
 "$ISAACLAB_PATH/isaaclab.sh" -p -m pip install -e isaac_utils
 "$ISAACLAB_PATH/isaaclab.sh" -p -m pip install -e poselib
@@ -45,11 +46,11 @@ echo "=== [4/4] 验证 ==="
 echo "-- walking_bio.pt --"
 ls -la data/walking_bio.pt
 if head -c 100 data/walking_bio.pt | grep -q "git-lfs"; then
-  echo "错误: walking_bio.pt 仍是 LFS 指针, 请执行 git lfs pull 后重试"
+  echo "错误: walking_bio.pt 仍是 LFS 指针, 请重新运行本脚本或手动下载"
   exit 1
 fi
 echo "-- import 检查 --"
-"$ISAACLAB_PATH/isaaclab.sh" -p -c "import protomotions, poselib, isaaclab; print('protomotions/poselib/isaaclab import OK')"
+PYTHONPATH=. "$ISAACLAB_PATH/isaaclab.sh" -p -c "import protomotions, poselib, isaaclab; print('protomotions/poselib/isaaclab import OK')"
 
 echo ""
 echo "=== 安装完成 ==="
