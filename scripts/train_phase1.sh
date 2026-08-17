@@ -21,6 +21,7 @@ EXP_NAME="${EXP_NAME:-walking_pd_expert}"         # 实验名 (产物在 results
 WANDB_ID="${WANDB_ID:-null}"                      # wandb run id (续训用)
 
 cd "$(dirname "$0")/.."                           # 进入仓库根目录
+export PYTHONPATH="$(pwd)${PYTHONPATH:+:$PYTHONPATH}"   # 仓库根加入 PYTHONPATH, 供 import protomotions
 
 # ---- 激活 conda 环境 ----
 source "$HOME/miniconda3/etc/profile.d/conda.sh" 2>/dev/null \

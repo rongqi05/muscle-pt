@@ -22,6 +22,7 @@ EXP_NAME="${EXP_NAME:-walking_muscle_student}"
 EXPERT="${EXPERT:-results/walking_pd_expert}"      # Phase 1 教师 checkpoint 目录
 
 cd "$(dirname "$0")/.."
+export PYTHONPATH="$(pwd)${PYTHONPATH:+:$PYTHONPATH}"   # 仓库根加入 PYTHONPATH, 供 import protomotions
 
 source "$HOME/miniconda3/etc/profile.d/conda.sh" 2>/dev/null \
   || source "$HOME/anaconda3/etc/profile.d/conda.sh" 2>/dev/null \
