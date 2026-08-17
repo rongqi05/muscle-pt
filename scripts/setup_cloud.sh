@@ -27,13 +27,13 @@ fi
 git lfs install
 
 echo "=== [2/4] 拉取训练数据 (walking_bio.pt) ==="
-if git lfs pull; then
-  echo "LFS 拉取成功"
-else
-  echo "LFS 拉取失败 (配额/带宽问题), 改用 GitHub Release 下载..."
-  curl -L -o data/walking_bio.pt \
-    https://github.com/rongqi05/muscle-pt/releases/download/data-v1/walking_bio.pt
+git lfs pull
+if [ "$(head -c 2 data/walking_bio.pt | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
+  echo "错误: walking_bio.pt 仍是 LFS 指针或未下载完整 (开头应为 zip 魔数 PK)。"
+  echo "请检查 Git LFS 认证 (私有仓库需带凭据) 后重试: git lfs pull"
+  exit 1
 fi
+echo "LFS 拉取成功: $(du -h data/walking_bio.pt | cut -f1)"
 
 echo "=== [3/4] 安装依赖 (用 Isaac Lab 的 python) ==="
 # 注: protomotions 包没有 setup.py/pyproject.toml, 不执行 `pip install -e .`;
