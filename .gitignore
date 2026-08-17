@@ -32,6 +32,9 @@ data/*.pt
 !data/walking_bio.pt
 checkpoints/*
 *.sh
+# 例外: 训练脚本
+!scripts/train_phase1.sh
+!scripts/train_phase2.sh
 Kinesis/*
 UniPhys/*
 # Isaac Lab 源码(运行时依赖,非本仓库内容)
