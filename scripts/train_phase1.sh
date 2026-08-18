@@ -22,11 +22,14 @@ WANDB_ID="${WANDB_ID:-null}"                      # wandb run id (续训用)
 
 cd "$(dirname "$0")/.."                           # 进入仓库根目录
 
-# ---- 数据检查: walking_bio.pt 需由用户手动放到 data/ (不再走 git/LFS) ----
-if [ ! -f data/walking_bio.pt ] || [ "$(head -c 2 data/walking_bio.pt 2>/dev/null | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
-  echo "错误: 缺少有效的 data/walking_bio.pt (约 161MB)。"
-  echo "该文件已从 git 移除, 请从本地电脑手动上传到仓库的 data/ 目录后重试。"
-  exit 1
+# ---- 数据完整性检查: walking_bio.pt 必须是真实数据 (zip 格式, 不是 Git LFS 指针) ----
+if [ "$(head -c 2 data/walking_bio.pt 2>/dev/null | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
+  echo "data/walking_bio.pt 缺失或损坏 (可能仍是 LFS 指针), 执行 git lfs pull 拉取真实数据..."
+  git lfs pull
+  if [ "$(head -c 2 data/walking_bio.pt | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
+    echo "错误: data/walking_bio.pt 拉取失败, 请手动执行: git lfs pull"
+    exit 1
+  fi
 fi
 echo "data/walking_bio.pt 校验通过 ($(du -h data/walking_bio.pt | cut -f1))"
 
