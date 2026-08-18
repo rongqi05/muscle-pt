@@ -222,7 +222,6 @@ class IsaacLabSimulator(Simulator):
                 max_position_iteration_count=self.config.sim.physx.num_position_iterations,
                 max_velocity_iteration_count=self.config.sim.physx.num_velocity_iterations,
                 bounce_threshold_velocity=self.config.sim.physx.bounce_threshold_velocity,
-                use_gpu=self.config.sim.physx.use_gpu,
                 gpu_max_rigid_contact_count=self.config.sim.physx.gpu_max_rigid_contact_count,
                 gpu_found_lost_pairs_capacity=self.config.sim.physx.gpu_found_lost_pairs_capacity,
                 gpu_found_lost_aggregate_pairs_capacity=self.config.sim.physx.gpu_found_lost_aggregate_pairs_capacity,
