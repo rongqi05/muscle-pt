@@ -28,8 +28,6 @@ data/U
 data/motions_retarget_all
 data/*.tgz
 data/*.pt
-# 例外: 训练用打包好的运动库 (用 Git LFS 管理)
-!data/walking_bio.pt
 checkpoints/*
 *.sh
 # 例外: 训练与安装脚本

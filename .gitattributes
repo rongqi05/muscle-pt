@@ -1,1 +1,1 @@
-data/*.pt filter=lfs diff=lfs merge=lfs -text
+# walking_bio.pt 不再走 git/LFS, 由用户手动上传到云桌面 data/ 目录

@@ -26,14 +26,13 @@ if ! command -v git-lfs >/dev/null 2>&1; then
 fi
 git lfs install
 
-echo "=== [2/4] 拉取训练数据 (walking_bio.pt) ==="
-git lfs pull
-if [ "$(head -c 2 data/walking_bio.pt | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
-  echo "错误: walking_bio.pt 仍是 LFS 指针或未下载完整 (开头应为 zip 魔数 PK)。"
-  echo "请检查 Git LFS 认证 (私有仓库需带凭据) 后重试: git lfs pull"
+echo "=== [2/4] 检查训练数据 (walking_bio.pt) ==="
+if [ ! -f data/walking_bio.pt ] || [ "$(head -c 2 data/walking_bio.pt 2>/dev/null | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
+  echo "错误: 缺少有效的 data/walking_bio.pt (约 161MB)。"
+  echo "该文件不再通过 git 分发, 请从本地电脑手动上传到仓库的 data/ 目录。"
   exit 1
 fi
-echo "LFS 拉取成功: $(du -h data/walking_bio.pt | cut -f1)"
+echo "数据检查通过: $(du -h data/walking_bio.pt | cut -f1)"
 
 echo "=== [3/4] 安装依赖 (用 Isaac Lab 的 python) ==="
 # 注: protomotions 包没有 setup.py/pyproject.toml, 不执行 `pip install -e .`;

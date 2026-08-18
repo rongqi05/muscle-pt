@@ -22,23 +22,22 @@ EXP_NAME="${EXP_NAME:-walking_muscle_student}"
 EXPERT="${EXPERT:-results/walking_pd_expert}"      # Phase 1 教师 checkpoint 目录
 
 cd "$(dirname "$0")/.."
-export PYTHONPATH="$(pwd)${PYTHONPATH:+:$PYTHONPATH}"   # 仓库根加入 PYTHONPATH, 供 import protomotions
 
-# ---- 数据完整性检查: walking_bio.pt 必须是真实数据 (zip 格式, 不是 Git LFS 指针) ----
-if [ "$(head -c 2 data/walking_bio.pt 2>/dev/null | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
-  echo "data/walking_bio.pt 缺失或损坏 (可能仍是 LFS 指针), 执行 git lfs pull 拉取真实数据..."
-  git lfs pull
-  if [ "$(head -c 2 data/walking_bio.pt | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
-    echo "错误: data/walking_bio.pt 拉取失败, 请手动执行: git lfs pull"
-    exit 1
-  fi
+# ---- 数据检查: walking_bio.pt 需由用户手动放到 data/ (不再走 git/LFS) ----
+if [ ! -f data/walking_bio.pt ] || [ "$(head -c 2 data/walking_bio.pt 2>/dev/null | od -An -tx1 | tr -d ' \n')" != "504b" ]; then
+  echo "错误: 缺少有效的 data/walking_bio.pt (约 161MB)。"
+  echo "该文件已从 git 移除, 请从本地电脑手动上传到仓库的 data/ 目录后重试。"
+  exit 1
 fi
 echo "data/walking_bio.pt 校验通过 ($(du -h data/walking_bio.pt | cut -f1))"
 
 source "$HOME/miniconda3/etc/profile.d/conda.sh" 2>/dev/null \
   || source "$HOME/anaconda3/etc/profile.d/conda.sh" 2>/dev/null \
   || { echo "未找到 conda, 请修改脚本里的 CONDA 激活路径"; exit 1; }
+set +e   # conda activate 内部命令在 set -e 下会误触发退出
 conda activate "$CONDA_ENV"
+set -e
+export PYTHONPATH="$(pwd)${PYTHONPATH:+:$PYTHONPATH}"   # 必须在 activate 之后设置 (conda 会重置 PYTHONPATH)
 
 if [ ! -d "$EXPERT" ]; then
   echo "错误: 未找到教师 checkpoint 目录 $EXPERT"
@@ -49,6 +48,7 @@ fi
 echo "=== Phase 2: 284 维肌肉学生 ==="
 echo "  envs=$NUM_ENVS  batch=$BATCH_SIZE  exp=$EXP_NAME  expert=$EXPERT"
 
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True   # 减少显存碎片 (8GB 小卡)
 CUDA_VISIBLE_DEVICES=0 python protomotions/train_agent.py \
     +exp=mus/no_vae_no_text_flat_terrain \
     +robot=bio_act_stu \
