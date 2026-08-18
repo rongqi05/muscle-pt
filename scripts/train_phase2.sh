@@ -20,6 +20,7 @@ NUM_ENVS="${NUM_ENVS:-512}"
 BATCH_SIZE="${BATCH_SIZE:-2048}"
 EXP_NAME="${EXP_NAME:-walking_muscle_student}"
 EXPERT="${EXPERT:-results/walking_pd_expert}"      # Phase 1 教师 checkpoint 目录
+PHYSX_GPU="${PHYSX_GPU:-true}"                    # GPU PhysX; 云/虚拟 GPU 报 CUDA operation not supported 时设 false 用 CPU
 
 cd "$(dirname "$0")/.."
 
@@ -49,7 +50,7 @@ if [ ! -d "$EXPERT" ]; then
 fi
 
 echo "=== Phase 2: 284 维肌肉学生 ==="
-echo "  envs=$NUM_ENVS  batch=$BATCH_SIZE  exp=$EXP_NAME  expert=$EXPERT"
+echo "  envs=$NUM_ENVS  batch=$BATCH_SIZE  exp=$EXP_NAME  expert=$EXPERT  physx_gpu=$PHYSX_GPU"
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True   # 减少显存碎片 (8GB 小卡)
 CUDA_VISIBLE_DEVICES=0 python protomotions/train_agent.py \
@@ -62,4 +63,5 @@ CUDA_VISIBLE_DEVICES=0 python protomotions/train_agent.py \
     num_envs="$NUM_ENVS" \
     agent.config.batch_size="$BATCH_SIZE" \
     agent.config.num_mini_epochs=2 \
+    simulator.config.sim.physx.use_gpu="$PHYSX_GPU" \
     ngpu=1

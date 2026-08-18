@@ -19,6 +19,7 @@ NUM_ENVS="${NUM_ENVS:-512}"                       # 并行环境数 (16GB 显存
 BATCH_SIZE="${BATCH_SIZE:-2048}"                  # PPO batch size
 EXP_NAME="${EXP_NAME:-walking_pd_expert}"         # 实验名 (产物在 results/<EXP_NAME>/)
 WANDB_ID="${WANDB_ID:-null}"                      # wandb run id (续训用)
+PHYSX_GPU="${PHYSX_GPU:-true}"                    # GPU PhysX; 云/虚拟 GPU 报 CUDA operation not supported 时设 false 用 CPU
 
 cd "$(dirname "$0")/.."                           # 进入仓库根目录
 
@@ -43,7 +44,7 @@ set -e
 export PYTHONPATH="$(pwd)${PYTHONPATH:+:$PYTHONPATH}"   # 必须在 activate 之后设置 (conda 会重置 PYTHONPATH)
 
 echo "=== Phase 1: PPO PD 行走专家 ==="
-echo "  envs=$NUM_ENVS  batch=$BATCH_SIZE  exp=$EXP_NAME"
+echo "  envs=$NUM_ENVS  batch=$BATCH_SIZE  exp=$EXP_NAME  physx_gpu=$PHYSX_GPU"
 
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True   # 减少显存碎片 (8GB 小卡)
 CUDA_VISIBLE_DEVICES=0 python protomotions/train_agent.py \
@@ -57,6 +58,7 @@ CUDA_VISIBLE_DEVICES=0 python protomotions/train_agent.py \
     agent.config.num_mini_epochs=2 \
     agent.config.eval_metrics_every=2000 \
     +agent.config.train_teacher=true \
+    simulator.config.sim.physx.use_gpu="$PHYSX_GPU" \
     ngpu=1
 
 # 如需 wandb 记录, 在训练命令后追加:

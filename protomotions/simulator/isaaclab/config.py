@@ -6,6 +6,7 @@ from protomotions.simulator.isaacgym.config import IsaacGymPhysXParams
 @dataclass
 class IsaacLabPhysXParams(IsaacGymPhysXParams):
     """PhysX physics engine parameters."""
+    use_gpu: bool = True  # GPU PhysX; 虚拟化/云 GPU 不支持时设 False (CPU PhysX)
     gpu_found_lost_pairs_capacity: int = 2**21
     gpu_max_rigid_contact_count: int = 2**23
     gpu_found_lost_aggregate_pairs_capacity: int = 2**25
