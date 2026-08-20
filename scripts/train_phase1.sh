@@ -4,22 +4,23 @@
 # 目标: 训练一个用 PD 控制跟踪 walking_bio.pt 的行走专家策略,
 #       作为 Phase 2 肌肉学生的教师 (expert)。
 #
-# 云桌面环境: 1x RTX 5880 16GB, Isaac Sim 5.0, Isaac Lab 2.2.0, Ubuntu 22.04
+# AutoDL 环境: RTX 4090D 24GB (GPU 直通), Ubuntu 22.04, 驱动 580
 #
 # 用法:
 #   bash scripts/train_phase1.sh
 #   WANDB_ID=xxx bash scripts/train_phase1.sh        # 启用 wandb 断点续训
-#   NUM_ENVS=256 bash scripts/train_phase1.sh        # 显存不足时调小
+#   NUM_ENVS=512 bash scripts/train_phase1.sh        # 显存不足时调小
 # =============================================================================
 set -e
 
 # ---- 可调参数 ----
 CONDA_ENV="${CONDA_ENV:-env_isaaclab}"          # conda 环境名
-NUM_ENVS="${NUM_ENVS:-512}"                       # 并行环境数 (16GB 显存推荐 512)
-BATCH_SIZE="${BATCH_SIZE:-2048}"                  # PPO batch size
+NUM_ENVS="${NUM_ENVS:-1024}"                      # 并行环境数 (24GB 显存推荐 1024)
+BATCH_SIZE="${BATCH_SIZE:-4096}"                  # PPO batch size (1024*32/8 mini-batch)
 EXP_NAME="${EXP_NAME:-walking_pd_expert}"         # 实验名 (产物在 results/<EXP_NAME>/)
 WANDB_ID="${WANDB_ID:-null}"                      # wandb run id (续训用)
-PHYSX_GPU="${PHYSX_GPU:-true}"                    # GPU PhysX; 云/虚拟 GPU 报 CUDA operation not supported 时设 false 用 CPU
+PHYSX_GPU="${PHYSX_GPU:-true}"                    # GPU PhysX; 4090D 直通保持 true
+EVAL_EVERY="${EVAL_EVERY:-2000}"                  # 评估频率 (24GB 显存充足, 恢复默认评估)
 
 cd "$(dirname "$0")/.."                           # 进入仓库根目录
 
@@ -56,7 +57,7 @@ CUDA_VISIBLE_DEVICES=0 python protomotions/train_agent.py \
     num_envs="$NUM_ENVS" \
     agent.config.batch_size="$BATCH_SIZE" \
     agent.config.num_mini_epochs=2 \
-    agent.config.eval_metrics_every=2000 \
+    agent.config.eval_metrics_every="$EVAL_EVERY" \
     +agent.config.train_teacher=true \
     simulator.config.sim.physx.use_gpu="$PHYSX_GPU" \
     ngpu=1

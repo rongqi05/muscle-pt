@@ -6,7 +6,7 @@
 # 前置条件: 先跑完 Phase 1 (scripts/train_phase1.sh),
 #           产物在 results/walking_pd_expert/ (含 score_based.ckpt / last.ckpt)
 #
-# 云桌面环境: 1x RTX 5880 16GB, Isaac Sim 5.0, Isaac Lab 2.2.0, Ubuntu 22.04
+# AutoDL 环境: RTX 4090D 24GB (GPU 直通), Ubuntu 22.04, 驱动 580
 #
 # 用法:
 #   bash scripts/train_phase2.sh
@@ -16,11 +16,11 @@ set -e
 
 # ---- 可调参数 ----
 CONDA_ENV="${CONDA_ENV:-env_isaaclab}"
-NUM_ENVS="${NUM_ENVS:-512}"
-BATCH_SIZE="${BATCH_SIZE:-2048}"
+NUM_ENVS="${NUM_ENVS:-1024}"                      # 并行环境数 (24GB 显存推荐 1024)
+BATCH_SIZE="${BATCH_SIZE:-2048}"                  # PPO batch size
 EXP_NAME="${EXP_NAME:-walking_muscle_student}"
 EXPERT="${EXPERT:-results/walking_pd_expert}"      # Phase 1 教师 checkpoint 目录
-PHYSX_GPU="${PHYSX_GPU:-true}"                    # GPU PhysX; 云/虚拟 GPU 报 CUDA operation not supported 时设 false 用 CPU
+PHYSX_GPU="${PHYSX_GPU:-true}"                    # GPU PhysX; 4090D 直通保持 true
 
 cd "$(dirname "$0")/.."
 
