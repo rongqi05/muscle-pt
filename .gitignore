@@ -38,5 +38,9 @@ Kinesis/*
 UniPhys/*
 # Isaac Lab 源码(运行时依赖,非本仓库内容)
 IsaacLab/
+
+# 本地大文件/下载数据, 不提交
+*.tar.gz
+data/cmu_mocap/
 # 调试日志
 MUJOCO_LOG.TXT

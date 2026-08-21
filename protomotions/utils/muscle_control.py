@@ -9,6 +9,18 @@ class MuscleController:
 
     def prepare(self, body_names: list, dof_names: list):
         self.muscle_char.prepare_mapping(body_names, dof_names)
+
+    def set_global_scale(self, scale: float) -> None:
+        """全局缩放所有肌肉 f0(等强缩放主动与被动力)。"""
+        self.muscle_char.f0 = self.muscle_char.f0 * float(scale)
+
+    def set_muscle_scales(self, scale_map: dict, max_scale: float = 20.0) -> None:
+        """按肌肉名缩放 f0(上限 max_scale), 用于补偿偏弱的肌肉(如踝/足/髋)。"""
+        names = [m.name for m in self.muscle_char.muscles]
+        for name, s in scale_map.items():
+            if name in names:
+                i = names.index(name)
+                self.muscle_char.f0[i] = self.muscle_char.f0[i] * min(float(s), max_scale)
    
     def g_al(self, x: torch.Tensor):
         return torch.exp(-((x - 1.0) * (x - 1.0)) / self.muscle_char.gamma)
