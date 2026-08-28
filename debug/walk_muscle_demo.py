@@ -54,6 +54,7 @@ from isaac_utils.rotations import wxyz_to_xyzw  # noqa: E402
 from poselib.skeleton.skeleton3d import SkeletonMotion  # noqa: E402
 from protomotions.simulator.isaaclab.utils.robots import BIO_ACT_CFG  # noqa: E402
 from protomotions.utils.muscle_control import MuscleController  # noqa: E402
+from protomotions.utils.direct_muscle import MUSCLE_SCALE_MAP  # noqa: E402
 
 BODY_NAMES = [
     "Pelvis", "Spine", "Torso", "Neck", "Head",
@@ -95,46 +96,6 @@ DAMPING = {"Hip": 6.0, "Knee": 4.5, "Ankle": 6.0, "Torso": 7.5, "Spine": 4.5,
 
 MUSCLE_XML = os.path.join(REPO_ROOT, "protomotions", "data", "assets", "muscle284.xml")
 BIO_XML = os.path.join(REPO_ROOT, "protomotions", "data", "assets", "mjcf", "bio.xml")
-
-# 偏弱肌肉的 f0 补偿倍率 (源自 simulator/isaaclab/simulator.py 中被注释的 muscle_scale_map)。
-# 踝/足/趾肌肉普遍需要 5~20x, 髋部 3~6x, 才能产生足够力矩。
-MUSCLE_SCALE_MAP = {
-    "L_Extensor_Digitorum_Longus": 12.0, "L_Extensor_Digitorum_Longus1": 12.0,
-    "L_Extensor_Digitorum_Longus2": 12.0, "L_Extensor_Digitorum_Longus3": 12.0,
-    "L_Flexor_Digitorum_Longus": 12.0, "L_Flexor_Digitorum_Longus1": 12.0,
-    "L_Flexor_Digitorum_Longus2": 12.0, "L_Flexor_Digitorum_Longus3": 12.0,
-    "L_Flexor_Digiti_Minimi_Brevis_Foot": 12.0, "L_Flexor_Hallucis": 8.0,
-    "L_Flexor_Hallucis1": 8.0, "L_Extensor_Hallucis_Longus": 8.0,
-    "L_Tibialis_Anterior": 14.0, "L_Tibialis_Posterior": 5.0,
-    "L_Peroneus_Longus": 11.0, "L_Peroneus_Brevis": 11.0,
-    "L_Peroneus_Tertius": 12.0, "L_Peroneus_Tertius1": 12.0, "L_Plantaris": 12.0,
-    "L_Soleus": 11.0, "L_Soleus1": 9.0,
-    "L_Gastrocnemius_Medial_Head": 3.0, "L_Gastrocnemius_Lateral_Head": 3.0,
-    "L_Semimembranosus": 3.0, "L_Semitendinosus": 2.0,
-    "L_Psoas_Major1": 6.0, "L_Psoas_Major2": 4.5, "L_Psoas_Minor": 3.0,
-    "L_Pectineus": 4.0, "L_Gluteus_Medius": 4.0, "L_Gluteus_Medius1": 4.0,
-    "L_Gluteus_Medius2": 4.0, "L_Gluteus_Medius3": 4.0,
-    "L_Gluteus_Maximus1": 3.0, "L_Gluteus_Maximus2": 3.0,
-    "L_Gluteus_Maximus3": 3.0, "L_Gluteus_Maximus4": 3.0, "L_Quadratus_Lumborum1": 2.5,
-    "R_Extensor_Digitorum_Longus": 14.0, "R_Extensor_Digitorum_Longus1": 14.0,
-    "R_Extensor_Digitorum_Longus2": 14.0, "R_Extensor_Digitorum_Longus3": 16.0,
-    "R_Flexor_Digitorum_Longus": 20.0, "R_Flexor_Digitorum_Longus1": 20.0,
-    "R_Flexor_Digitorum_Longus2": 16.0, "R_Flexor_Digitorum_Longus3": 16.0,
-    "R_Flexor_Digiti_Minimi_Brevis_Foot": 12.0, "R_Flexor_Hallucis": 8.0,
-    "R_Flexor_Hallucis1": 8.0, "R_Extensor_Hallucis_Longus": 8.0,
-    "R_Tibialis_Anterior": 20.0, "R_Tibialis_Posterior": 5.0,
-    "R_Peroneus_Longus": 12.0, "R_Peroneus_Brevis": 12.0,
-    "R_Peroneus_Tertius": 12.0, "R_Peroneus_Tertius1": 12.0, "R_Plantaris": 12.0,
-    "R_Soleus": 8.0, "R_Soleus1": 6.0,
-    "R_Gastrocnemius_Medial_Head": 3.0, "R_Gastrocnemius_Lateral_Head": 3.0,
-    "R_Semimembranosus": 3.0, "R_Semitendinosus": 2.0,
-    "R_Psoas_Major1": 6.0, "R_Psoas_Major2": 4.5, "R_Psoas_Minor": 3.0,
-    "R_Pectineus": 4.0, "R_Gluteus_Medius": 4.0, "R_Gluteus_Medius1": 4.0,
-    "R_Gluteus_Medius2": 4.0, "R_Gluteus_Medius3": 4.0,
-    "R_Gluteus_Maximus1": 3.0, "R_Gluteus_Maximus2": 3.0,
-    "R_Gluteus_Maximus3": 3.0, "R_Gluteus_Maximus4": 3.0,
-    "R_Latissimus_Dorsi3": 3.0, "R_Serratus_Posterior_Inferior": 3.0,
-}
 
 
 def build_pd_gains():

@@ -1,8 +1,0 @@
-# Forward map MLP configuration
-layers:
-  - units: 256
-    activation: "relu"
-    use_layer_norm: false
-  - units: 256
-    activation: "relu"
-    use_layer_norm: false

@@ -2,7 +2,7 @@ import torch
 import numpy as np
 import trimesh
 from isaaclab.terrains.utils import create_prim_from_mesh
-from pxr import UsdGeom, Gf, Usd, Vt, UsdShade, Sdf, UsdPhysics
+from pxr import UsdGeom, Gf, Vt, UsdShade, Sdf, UsdPhysics
 import omni.usd
 from typing import Dict, Any, Tuple
 

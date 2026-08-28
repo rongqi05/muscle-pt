@@ -8,7 +8,7 @@ from isaaclab.scene import InteractiveSceneCfg
 from isaaclab.sensors import ContactSensorCfg
 from isaaclab.terrains.terrain_importer_cfg import TerrainImporterCfg
 from isaaclab.assets import RigidObjectCfg
-from isaaclab.utils.assets import ISAACLAB_NUCLEUS_DIR, ISAAC_NUCLEUS_DIR
+from isaaclab.utils.assets import ISAAC_NUCLEUS_DIR
 from protomotions.simulator.isaaclab.utils.usd_utils import (
     TrimeshTerrainImporter,
 )
@@ -41,29 +41,19 @@ class SceneCfg(InteractiveSceneCfg):
         robot_config: RobotConfig,
         terrain,
         scene_cfgs=None,
-        pretty=False,
         *args,
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
         robot_type = robot_config.asset.robot_type
-        # lights
-        if True:  # pretty:
-            # This is way prettier, but also slower to render
-            self.light = AssetBaseCfg(
-                prim_path="/World/Light",
-                spawn=sim_utils.DomeLightCfg(
-                    intensity=750.0,
-                    texture_file=f"{ISAAC_NUCLEUS_DIR}/Materials/Textures/Skies/PolyHaven/kloofendal_43d_clear_puresky_4k.hdr",
-                ),
-            )
-        else:
-            self.light = AssetBaseCfg(
-                prim_path="/World/Light",
-                spawn=sim_utils.DomeLightCfg(
-                    intensity=3000.0, color=(0.75, 0.75, 0.75)
-                ),
-            )
+        # lights (DomeLight + skybox texture)
+        self.light = AssetBaseCfg(
+            prim_path="/World/Light",
+            spawn=sim_utils.DomeLightCfg(
+                intensity=750.0,
+                texture_file=f"{ISAAC_NUCLEUS_DIR}/Materials/Textures/Skies/PolyHaven/kloofendal_43d_clear_puresky_4k.hdr",
+            ),
+        )
 
         # articulation
         if robot_type == "smpl_humanoid":

@@ -1,0 +1,19 @@
+<mujoco model="rig_floor">
+  <!-- 包装 bio.xml 并加一块网格地面, 供 MuJoCo 直接肌肉控制 demo 使用 -->
+  <include file="bio.xml"/>
+  <asset>
+    <!-- 网格地面: 自生成 grid.png (浅灰底 + 深灰网格线) -->
+    <texture type="2d" name="texgrid" file="grid.png"/>
+    <material name="MatGrid" texture="texgrid" texrepeat="16 16"
+              texuniform="true" reflectance="0.12"/>
+  </asset>
+  <visual>
+    <global offwidth="1600" offheight="1200"/>
+    <quality shadowsize="4096" offsamples="8"/>
+  </visual>
+  <worldbody>
+    <light pos="0 0 3" dir="0 0 -1" directional="true"
+           diffuse="0.85 0.85 0.85" specular="0.1 0.1 0.1"/>
+    <geom name="floor" type="plane" size="0 0 1" pos="0 0 0" material="MatGrid"/>
+  </worldbody>
+</mujoco>

@@ -1,80 +1,111 @@
-# MuscleControl-Isaac
-An IsaacLab-based repository for **muscle-activation control** and **muscle/skeleton visualization**. This project extends the IsaacLab ecosystem with muscle-driven human models and training/evaluation pipelines for research in biomechanical control, imitation learning, and motion generation.
+# MuscleControl — MuJoCo 肌肉骨骼仿真平台
 
-![Diffusion Forcing Control](assets/1.png)
+肌肉骨骼驱动的**行走仿真与控制**平台(MuJoCo CPU 刚体仿真 + 自定义 Hill 肌肉模型),目标是**偏瘫(hemiplegia)肌肉骨骼仿真验证**。技术路线为**纯直接优化**(无 RL / 不训练网络):
 
-## Highlights
-- Muscle-activation control: muscle-driven human models and control interfaces.
-- Visualization: muscle and skeleton mesh rendering for analysis and debugging.
-- Training & evaluation: integrated scripts and entry points for experiments.
-- DiffusionForcing Control: use diffusion forcing to guide and control.
-## Install
-1. Install IsaacLab
-2. Once IsaacLab is installed, from the repository root install the ProtoMotions package and its dependencies with:
+BVH/BIO 运动 → 参考姿态 q_ref → PD 期望力矩 → 逐帧优化 284 块肌肉激活 → Hill 肌肉 → 50 关节力矩 → MuJoCo 仿真
 
-Set PYTHON_PATH to point at the isaaclab.sh script
-For Linux: 
-```
-alias PYTHON_PATH="<isaac_lab_path> -p"
-```
-For example: 
-```
-alias PYTHON_PATH="/home/USERNAME/IsaacLab/isaaclab.sh -p"
-```
-Once IsaacLab is installed, from the protomotions repository root, install the Physical Animation package and its dependencies with:
-```
-PYTHON_PATH -m pip install -e .
-PYTHON_PATH -m pip install -r requirements_isaaclab.txt
-PYTHON_PATH -m pip install -e isaac_utils
-PYTHON_PATH -m pip install -e poselib
-```
+## 核心能力
 
-## Training
-### PD(phase 1) 
-```
-CUDA_VISIBLE_DEVICES=0 python protomotions/train_agent.py \
-    +exp=full_body_tracker/transformer_flat_terrain \
-    +robot=bio_act \
-    +simulator=isaaclab \
-    motion_file=./data/amass_retarget.pt \
-    +experiment_name=full_body_tracker_motionfix_v2 \
-    num_envs=1024 \
-    agent.config.batch_size=4096 \
-    agent.config.num_mini_epochs=2 \
-    agent.config.eval_metrics_every=2000 \
-    +opt=wandb \
-    wandb.wandb_id=${WANDB_ID:-null} \
-    wandb.wandb_resume=allow \
-    +agent.config.train_teacher=true \
-    ngpu=1
-```
-### Muscle(phase 2)
-```
-CUDA_VISIBLE_DEVICES=0 python protomotions/train_agent.py \
-    +exp=mus/no_vae_no_text_flat_terrain \
-    +robot=bio_act_stu \
-    +simulator=isaaclab \
-    motion_file=./data/amass_filtered.pt \
-    +experiment_name=student_2 \
-    num_envs=1024 \
-    agent.config.batch_size=2048 \
-    agent.config.num_mini_epochs=2 \
-    agent.config.eval_metrics_every=2000 \
-    +opt=wandb \
-    wandb.wandb_id=${WANDB_ID:-null} \
-    wandb.wandb_resume=allow \
-    agent.config.expert_model_path=results/full_body_tracker_motionfix_v2 \
-    ngpu=1
+- **直接肌肉控制**:284 块 Hill 肌肉逐帧反解激活,全身跟踪误差 ≈ 1.8°
+- **MuJoCo 原生仿真**:CPU 刚性体(替代 Isaac Lab GPU),无需显卡
+- **肌肉可视化**:284 肌肉线按激活灰→红着色;离屏视频 + 实时交互窗口
+- **偏瘫实验**:患侧肌力减弱 80/60/40% 强度扫描
+- **Tendon 验证**:waypoint vs MuJoCo 原生 spatial-tendon 几何对比(结论:保留 waypoint)
+
+## 目录结构
+
+| 路径 | 作用 |
+|---|---|
+| `debug/` | CLI 演示 / 渲染 / 激活图(主入口) |
+| `protomotions/utils/` | 核心:`direct_muscle_mujoco.py`(仿真)、`muscle_control.py`(Hill 肌肉)、`muscle_parser.py`(解析)、`direct_muscle.py`(共享) |
+| `protomotions/simulator/isaaclab/` | 仅用于 Isaac 版对照 demo 的机器人定义 |
+| `protomotions/data/assets/` | 模型资产:`muscle284.xml`、`mjcf/bio*.xml`、`mesh/` |
+| `data/cmu_bio_npy/` | 输入运动(119 段 CMU 行走,BIO 骨架 .npy) |
+| `mujoco_demo/tendon_prototype/` | waypoint vs tendon 对比验证(报告 `out/report.md`) |
+| `mujoco_demo/viewer_demo/` | 实时交互 viewer(284 肌肉激活着色) |
+| `output/` | 渲染产物(视频 / GIF / 轨迹 npz) |
+| `archive/` | 归档:旧 RL 训练栈、历史调试、数据转换脚本 |
+
+## 环境
+
+```bash
+conda activate env_isaaclab    # Python 3.11, torch 2.7, mujoco 3.11
 ```
 
-## Demos
-### MotionTracking
-![Backflip demo](assets/2.gif)
+无 GPU 需求;渲染需 `imageio` / `imageio-ffmpeg`;交互窗口需 `glfw` / `PyOpenGL`。
 
-### GenerativeMotion(DiffusionForcing)
-![Diffusion-guided walking](assets/3.gif)
+## 快速开始
 
+以下命令均在仓库根目录执行。
 
+### 1. 单段评估
 
-## Acknowledgements
-Built on IsaacLab and ProtoMotions. Thanks to the community and upstream dependencies.
+```bash
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py \
+    --motion data/cmu_bio_npy/009/09_12.npy
+```
+
+### 2. 批量评估(119 段)
+
+```bash
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py \
+    --motion "data/cmu_bio_npy/*/*.npy" --batch
+```
+
+### 3. 渲染 10 秒肌肉行走视频(60fps, 网格地面, 全身)
+
+```bash
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py \
+    --motion data/cmu_bio_npy/009/09_12.npy --max-frames 300 \
+    --render-video output/mj_muscle_walk.mp4 \
+    --render-width 1280 --render-height 960
+```
+
+### 4. 284 肌肉激活图(热图 + 动画 GIF)
+
+```bash
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py \
+    --motion data/cmu_bio_npy/009/09_12.npy --max-frames 300 --save-npz output/mj_traj.npz
+PYTHONPATH=. python debug/plot_activation.py --npz output/mj_traj.npz \
+    --png output/activation_heatmap.png --gif output/activation_anim.gif
+```
+
+### 5. 实时交互窗口(284 肌肉激活着色)
+
+```bash
+PYTHONPATH=. python mujoco_demo/viewer_demo/view_demo_muscles.py --loop
+```
+
+## 偏瘫实验(患侧肌力强度扫描)
+
+```bash
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py \
+    --motion data/cmu_bio_npy/009/09_12.npy --affected-side L --strength-sweep
+```
+
+> 实验结论:逐帧全知优化下,患侧肌力降到 40% 跟踪仍几乎不变(激活自动补偿)。
+> 偏瘫步态异常主要由痉挛 / 神经驱动受限等机制驱动,平台后续在此方向扩展。
+
+## Tendon 验证(并行, 不改生产)
+
+```bash
+PYTHONPATH=. python -u mujoco_demo/tendon_prototype/compare.py    # 对比报告
+PYTHONPATH=. python -u mujoco_demo/tendon_prototype/visualize.py  # 双路径可视化
+```
+
+结论:**KEEP_WAYPOINT_BACKEND**(步态 ROM 内差异 <7mm,无系统性符号反向)。
+
+## 归档(archive/)
+
+RL 训练栈、历史调试脚本、数据转换管线已移至 `archive/`(git 历史可恢复),详见 `archive/README.md`。
+
+## 关键技术点
+
+- 力矩臂口径 τ=f·r:生产 `JtA` 已含负号;MuJoCo `ten_velocity` 取负对齐。
+- MuJoCo 需 `dof_armature=0.03` 防自由关节发散;激活优化用 `lbfgs + 50` 迭代。
+- 3-DOF 关节用 `quat_to_exp_map` 转 DOF(避免 euler 的 2π 环绕)。
+
+## 历史对照
+
+- `debug/walk_muscle_demo.py`:Isaac Lab 版(1.78°,需 GPU / Isaac Sim),仅作复现凭证。
+
