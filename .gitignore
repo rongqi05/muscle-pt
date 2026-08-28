@@ -14,6 +14,9 @@ results_bak/*
 *.bvh
 *.fbx
 *.npy
+# 例外: BIO 骨架运动数据 (demo 输入, 需随仓库分发)
+!data/cmu_bio_npy/
+!data/cmu_bio_npy/**
 *.pdf
 data/amass
 data/ASAP
