@@ -66,18 +66,6 @@ BVH/BIO 运动 → q_ref → PD 期望力矩 τ_des → 优化 284 激活 a
 **结论**:逐帧全知优化自动提高患侧激活补偿 f0 损失,肌力降到 40% 跟踪几乎不变。
 单纯"肌力减弱"不足以模拟偏瘫步态;下一步需**痉挛(速度相关阻力)、激活上限(神经驱动受限)、足下垂**等机制。另:基线本身存在 L/R 不对称(PD-only 1.09° vs 0.81°),与肌肉无关。
 
-### 3.5 Tendon 原型验证(并行,不改生产)
-- 10 条下肢肌肉 waypoint ↔ MuJoCo spatial-tendon 定量对比(长度/力矩臂/扭矩,1D + 2D 扫描);
-- 结果:**A×8、B×2、C/D×0**;步态 ROM 内 L MAE≤6.8mm、r MAE≤4.6mm,无系统性符号反向;
-- Wrap 原型(Gastrocnemius 股骨髁):长度更差、力矩臂微改善 → 不采用;
-- **决策:KEEP_WAYPOINT_BACKEND,不迁移 284 条**;
-- 报告:`mujoco_demo/tendon_prototype/out/report.md`。
-
-### 3.6 仓库整理与发布
-- 归档 RL 训练栈 / 历史调试 / 数据转换 → `archive/`(gitignore,不上传);
-- 死代码清理:3 个未引用文件、多处 unreachable、重复 `MUSCLE_SCALE_MAP`;
-- GitHub:`rongqi05/muscle-pt` 已同步(含 119 段运动数据 47MB;推送需 `--no-verify` 绕过 LFS hook)。
-
 ## 4. 下一步(偏瘫平台 Phase 1)
 
 1. 痉挛(spasticity):患侧速度相关被动阻力;
