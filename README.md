@@ -16,15 +16,27 @@ BVH/BIO 运动 → 参考姿态 q_ref → PD 期望力矩 → 逐帧优化 284 �
 
 | 路径 | 作用 |
 |---|---|
-| `debug/` | CLI 演示 / 渲染 / 激活图(主入口) |
+| `debug/` | CLI 演示 / 渲染 / 数据工具(见下表) |
 | `protomotions/utils/` | 核心:`direct_muscle_mujoco.py`(仿真)、`muscle_control.py`(Hill 肌肉)、`muscle_parser.py`(解析)、`direct_muscle.py`(共享) |
 | `protomotions/simulator/isaaclab/` | 仅用于 Isaac 版对照 demo 的机器人定义 |
 | `protomotions/data/assets/` | 模型资产:`muscle284.xml`、`mjcf/bio*.xml`、`mesh/` |
 | `data/cmu_bio_npy/` | 输入运动(119 段 CMU 行走,BIO 骨架 .npy) |
 | `mujoco_demo/tendon_prototype/` | waypoint vs tendon 对比验证(报告 `out/report.md`) |
 | `mujoco_demo/viewer_demo/` | 实时交互 viewer(284 肌肉激活着色) |
-| `output/` | 渲染产物(视频 / GIF / 轨迹 npz) |
+| `output/` | 渲染产物(视频 / GIF / 轨迹 npz / 导出 CSV) |
 | `archive/` | 归档:旧 RL 训练栈、历史调试、数据转换脚本 |
+
+### `debug/` 工具清单
+
+| 文件 | 作用 |
+|---|---|
+| `walk_muscle_demo_mujoco.py` | **主入口**:单段 / 批量评估、视频渲染、偏瘫强度扫描 |
+| `render_muscle_mujoco.py` | 离线骨架渲染(npz → GIF/mp4,蓝=实际 红=参考) |
+| `plot_activation.py` | 284 激活动态图(整段热图 PNG + 逐帧动画 GIF) |
+| `export_traj.py` | **数据导出**:npz → CSV(q/q_ref/τ_des/τ_muscle/activation + summary) |
+| `analyze_traj.py` | **数据分析**:CSV → 误差/对称性/激活热图/力矩匹配图 + 报告 |
+| `walk_muscle_demo.py` | Isaac Lab 对照版(1.78° 复现凭证) |
+| `test_muscle_parser.py` | 肌肉解析单测 |
 
 ## 环境
 
@@ -74,6 +86,18 @@ PYTHONPATH=. python debug/plot_activation.py --npz output/mj_traj.npz \
 
 ```bash
 PYTHONPATH=. python mujoco_demo/viewer_demo/view_demo_muscles.py --loop
+```
+
+### 6. 数据导出与分析
+
+```bash
+# 导出轨迹为 CSV (q/q_ref/τ_des/τ_muscle/activation + summary.json)
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py \
+    --motion data/cmu_bio_npy/009/09_12.npy --max-frames 300 --save-npz output/mj_traj.npz
+PYTHONPATH=. python debug/export_traj.py --npz output/mj_traj.npz --out output/export
+
+# 自动分析 (误差/对称性/激活热图/力矩匹配 + report.txt)
+PYTHONPATH=. python debug/analyze_traj.py --dir output/export
 ```
 
 ## 偏瘫实验(患侧肌力强度扫描)
