@@ -1,139 +1,112 @@
-# 阶段性成果报告 —— MuscleControl-Isaac 直接肌肉控制路线
+# 阶段性成果报告 —— MuJoCo 肌肉骨骼仿真平台
 
-> 日期: 2026-08-21
-> 目标: 让 BIO 人形(50 关节、284 块 Hill 型肌肉)通过**肌肉激活**驱动,在 Isaac Lab 中复现运动(当前以 CMU 行走为主)。
+> 更新: 2026-08-29
+> 目标: 在 MuJoCo 中构建**偏瘫(hemiplegia)人体肌肉骨骼仿真验证平台**,技术基础为 284 块 Hill 肌肉驱动的行走仿真。
 
 ---
 
-## 1. 技术路线(已确认的最终方案)
+## 1. 技术路线(最终方案)
 
-采用**纯直接优化**(不训练网络、无 RL),逐帧反解肌肉激活:
+**纯直接优化**(不训练网络、无 RL),逐帧反解肌肉激活;仿真后端为 **MuJoCo CPU 刚体引擎**(替代 Isaac Lab GPU):
 
 ```
-BVH → BIO q_ref → PD desired torque → optimization
-    → 284 activation → muscle model (Hill) → 50 torque → Isaac Lab
+BVH/BIO 运动 → q_ref → PD 期望力矩 τ_des → 优化 284 激活 a
+    → Hill 肌肉 (a·JtA + b) → 50 关节力矩 → MuJoCo 仿真
 ```
 
-每帧在每个物理子步内:
-1. 由参考关节轨迹 `q_ref` 经 PD 控制器算出期望力矩 `tau_des = kp·(q_ref−q) − kd·qd`;
-2. 用优化器解出 284 块肌肉激活 `a`,使 `a·JtA + b` 逼近 `tau_des`;
-3. Hill 肌肉模型把激活映射为 50 维关节力矩;
-4. 写入 Isaac Lab 驱动仿真。
+每个物理子步(240Hz):
+1. PD 控制器:`τ_des = kp·(q_ref − q) − kd·qd`;
+2. LBFGS 解 284 激活使 `a·JtA + b ≈ τ_des`;
+3. Hill 肌肉模型输出 50 关节力矩 → `qfrc_applied` 施加。
 
----
+## 2. 平台能力一览
 
-## 1.1 核心代码文件(⭐ 本次工作)
-
-| 文件 | 行数 | 类型 | 说明 |
-|---|---|---|---|
-| ⭐ `protomotions/utils/direct_muscle.py` | 421 | 新增 | **固化核心模块**:`DirectMuscleTracker` 类,整条直接肌肉控制路线(常量/`local_rotation_to_dof`/`optimize_act`/`track()`/`kinematic_reference()`) |
-| ⭐ `debug/walk_muscle_demo.py` | 481 | 新增 | CLI 入口:单段评估、`--sweep` 参数扫描、`--batch` 批量评估、`--scale-map`/`--pd-only` |
-| ⭐ `debug/render_muscle_walk.py` | 191 | 新增 | 离线可视化:骨架 GIF、`--video` mp4、`--color-act` 肌肉激活上色 |
-| ⭐ `protomotions/utils/muscle_control.py` | 157 | 修改 | 新增 `set_global_scale()` / `set_muscle_scales()`(按肌肉名缩放 f0,补偿偏弱肌肉) |
-| `protomotions/utils/muscle_parser.py` | 282 | 依赖 | Hill 肌肉参数解析(muscle284.xml + bio.xml) |
-| `data/scripts/convert_cmu_bvh_to_isaac.py` | — | 依赖 | BVH → BIO 骨架重定向(数据管线) |
-
-> ⭐ = 本次直接肌肉控制路线的核心新增/修改文件,其余为既有依赖。
-
----
-
-## 2. 已完成的工作
-
-### 2.1 数据管线(BVH → BIO q_ref)✅
-
-- 下载并处理 CMU MoCap 6 个 subject(`008/009/035/091/104/105`),共 **119 段行走**;
-- `data/scripts/convert_cmu_bvh_to_isaac.py`:BVH → BIO 骨架重定向(poselib `retarget_to`,scale=0.060);
-- 打包产物 `data/walking_bio.pt`(161MB,29min,走 Git LFS 分发);
-- 中间产物 `data/cmu_bio_npy/*/*.npy`(SkeletonMotion,30fps)。
-
-### 2.2 直接肌肉控制路线(核心成果)✅
-
-| 文件 | 作用 |
-|---|---|
-| `protomotions/utils/direct_muscle.py` | **固化模块**:`DirectMuscleTracker` 类(可复用,含 `track()` / `kinematic_reference()`) |
-| `debug/walk_muscle_demo.py` | CLI 入口:单段 / `--sweep` 参数扫描 / `--batch` 批量评估 |
-| `debug/render_muscle_walk.py` | 离线可视化:骨架 GIF / `--video` mp4 / `--color-act` 激活上色 |
-| `protomotions/utils/muscle_control.py` | 新增 `set_global_scale()` / `set_muscle_scales()`(按肌肉名缩放 f0) |
-
-### 2.3 关键 bug 定位与修复(4 个)✅
-
-| # | 问题 | 修复 |
+| 能力 | 状态 | 指标 |
 |---|---|---|
-| 1 | 3 自由度关节用 `get_euler_xyz` 返回 `% 2π`,小负角被包成 ~6.28 rad → 物理 NaN | 改用 `quat_to_exp_map`(角度 ∈ [−π,π]),与训练管线一致 |
-| 2 | **sim 关节顺序 ≠ common 顺序**,指标里重排方向写反,把 0.5° 误算成 19° | 明确 `sim→common = v_sim[dof_to_common]`、`common→sim = v_common[dof_to_sim]` |
-| 3 | `os._exit(0)` 结尾 + 输出重定向 → stdout 缓冲丢失 | exit 前 `sys.stdout.flush()` 或 `python -u` |
-| 4 | Isaac Sim `simulation_app.close()` 挂起 | 脚本末尾统一 `os._exit(0)` |
+| MuJoCo 直接肌肉控制 | ✅ | 单段 **1.83°**,批量 **119/119 @ 2.02°** |
+| Isaac Lab 对照版 | ✅ 凭证 | 1.78°(`debug/walk_muscle_demo.py`) |
+| 肌肉可视化 | ✅ | 284 线灰→红 + 半径/透明度随激活;离屏视频 + 实时 viewer |
+| 激活分析 | ✅ | 热图 + 逐帧动画(`plot_activation.py`) |
+| 偏瘫实验 | 🔶 第一步 | 患侧 F0 80/60/40% 强度扫描 |
+| Tendon 验证 | ✅ | waypoint vs spatial-tendon → **KEEP_WAYPOINT** |
 
----
+## 3. 各阶段成果
 
-## 3. 实验结果
+### 3.1 Isaac Lab 版(迁移前,保留作凭证)
+- 单段 **1.78°**、扭矩匹配 0.72;批量 119/119 @ 3.01°;
+- 4 个关键 bug 已修复:`quat_to_exp_map`(euler 2π 环绕)、关节顺序重排、`os._exit(0)`、`simulation_app.close()` 挂起。
 
-### 3.1 单段跟踪精度(CMU 009/09_12,40 帧,`ls` 优化)
+### 3.2 MuJoCo 迁移(核心)
+- `protomotions/utils/direct_muscle_mujoco.py`:与 Isaac 版同接口,CPU 仿真;
+- lbfgs+50 后单段 **1.83°**(Isaac 1.78°)、批量 **2.02°**(优于 Isaac 3.01°);
+- 关键坑:
+  1. `dof_armature=0.03` 必须设置,否则自由关节 QACC 爆炸;
+  2. 优化必须 `lbfgs + 50`(ls 最小范数解被裁剪后失效);
+  3. 力矩臂口径 τ=f·r:`ten_velocity` 取负与生产 `JtA` 对齐;
+  4. bio.xml 自带 stiffness/damping 需置零(Isaac 执行器 stiffness=0)。
 
-| 配置 | 全身关节跟踪误差 |
-|---|---|
-| PD-only 基线(完美力矩,对照) | **0.5°** |
-| 肌肉(无缩放) | 2.3° |
-| 肌肉 + 逐肌肉 f0 补偿(`--scale-map`) | **1.8°** ✅ |
+### 3.3 可视化体系
+- 视频渲染:网格地面 + 阴影 + 半透明骨骼 + 全身视角;**60fps 由 240Hz 物理子步插值**;
+- 肌肉线:`mjv_connector` 胶囊,颜色灰(0)→红(1),半径/透明度随激活;
+- 激活图:整段热图 + 逐帧动画 GIF(9 解剖区域分组);
+- 实时 viewer:`mujoco_demo/viewer_demo/view_demo_muscles.py`(glfw + PyOpenGL 自绘);
+  - 黑屏坑:MuJoCo Renderer 渲染后需 `glfw.make_context_current` 恢复窗口上下文;
+  - 已知限制:每子步优化导致 ~0.2x 倍速(可 `--max-iter 20 --muscle-stride 3` 缓解)。
 
-- 肌肉力矩 vs PD 期望力矩匹配度:0.72~0.80(相对误差);
-- 分部位(带 scale-map):腿 3.2° / 臂 2.3° / 躯干 1.0°;最差的踝/趾关节由 ~5° 降到 ~2.2°。
+### 3.4 偏瘫平台第一步:患侧 F0 强度实验
+`--affected-side L --strength-sweep`(100/80/60/40%):
 
-### 3.2 批量评估(全部 119 段,`--batch`)
+| 强度 | 全身(°) | 患侧(°) | 健侧(°) | τ匹配 |
+|---|---|---|---|---|
+| 100% | 1.83 | 1.56 | 0.96 | 0.563 |
+| 80% | 1.81 | 1.48 | 0.94 | 0.567 |
+| 60% | 1.83 | 1.44 | 0.90 | 0.587 |
+| 40% | 1.79 | 1.41 | 0.83 | 0.601 |
 
-```
-成功: 119/119  失败率: 0.0%
-平均跟踪误差: 3.01°  median 3.07°  p90 4.35°  max 6.00°
-```
+**结论**:逐帧全知优化自动提高患侧激活补偿 f0 损失,肌力降到 40% 跟踪几乎不变。
+单纯"肌力减弱"不足以模拟偏瘫步态;下一步需**痉挛(速度相关阻力)、激活上限(神经驱动受限)、足下垂**等机制。另:基线本身存在 L/R 不对称(PD-only 1.09° vs 0.81°),与肌肉无关。
 
-| subject | 段数 | 平均误差 |
-|---|---|---|
-| 008 | 11 | 4.87° |
-| 009 | 1 | 2.13° |
-| 035 | 23 | 2.97° |
-| 091 | 29 | 3.19° |
-| 104 | 23 | 1.81° |
-| 105 | 32 | 3.14° |
+### 3.5 Tendon 原型验证(并行,不改生产)
+- 10 条下肢肌肉 waypoint ↔ MuJoCo spatial-tendon 定量对比(长度/力矩臂/扭矩,1D + 2D 扫描);
+- 结果:**A×8、B×2、C/D×0**;步态 ROM 内 L MAE≤6.8mm、r MAE≤4.6mm,无系统性符号反向;
+- Wrap 原型(Gastrocnemius 股骨髁):长度更差、力矩臂微改善 → 不采用;
+- **决策:KEEP_WAYPOINT_BACKEND,不迁移 284 条**;
+- 报告:`mujoco_demo/tendon_prototype/out/report.md`。
 
-> 结论:**直接优化路线对全部 119 段行走零失败、稳定跟踪**,误差仅比完美 PD 高约 1.3°。
+### 3.6 仓库整理与发布
+- 归档 RL 训练栈 / 历史调试 / 数据转换 → `archive/`(gitignore,不上传);
+- 死代码清理:3 个未引用文件、多处 unreachable、重复 `MUSCLE_SCALE_MAP`;
+- GitHub:`rongqi05/muscle-pt` 已同步(含 119 段运动数据 47MB;推送需 `--no-verify` 绕过 LFS hook)。
 
-### 3.3 可视化验证
+## 4. 下一步(偏瘫平台 Phase 1)
 
-- `output/muscle_walk_long.mp4`:8 秒(240 帧 @30fps)肌肉驱动行走;
-- 数值确认:骨盆高 ~0.97 m(直立)、脚贴地 ~0.12 m、肌肉实际 vs 参考骨架平均差 **2.6 cm**。
+1. 痉挛(spasticity):患侧速度相关被动阻力;
+2. 激活上限:患侧 `a ≤ a_max`(神经驱动受限);
+3. 足下垂:踝背屈肌弱化 / 激活抑制;
+4. 双色可视化:患侧 / 健侧肌肉不同色系(viewer + 视频)。
 
----
-
-## 4. 环境状态
-
-| 机器 | 状态 |
-|---|---|
-| 本机 RTX 5060(Blackwell) | headless 物理可用;GUI/离屏渲染不可用 → 走离线 matplotlib 渲染 |
-| 云端 RTX 4090D(直通) | 部署文档 `DEPLOY.md` / `AUTO_DL_SETUP.md` 就绪,可跑 GUI + 肌肉网格上色 |
-
----
-
-## 5. 待办 / 下一步
-
-1. **数据质量**:脚接触校正(支撑相锚定脚),进一步降低踝/趾误差;
-2. **精度微调**:`MUSCLE_SCALE_MAP` 或 `--kp-scale` 扫描,逼近完美 PD 的 0.5°;
-3. **云端可视化**:4090D 上 `headless=False` 实时看肌肉网格按激活上色;
-4. **(可选)回 RL 两阶段**:Phase 1 教师此前跟踪成功率 0%(历史遗留),现可直接优化路线作参考基准。
-
----
-
-## 6. 复现命令
+## 5. 复现命令
 
 ```bash
-# 单段评估
-python debug/walk_muscle_demo.py --motion data/cmu_bio_npy/009/09_12.npy \
-    --method ls --max-iter 10 --scale-map --max-frames 40
+# MuJoCo 单段 / 批量
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py --motion data/cmu_bio_npy/009/09_12.npy
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py --motion "data/cmu_bio_npy/*/*.npy" --batch
 
-# 批量评估全部 119 段
-python debug/walk_muscle_demo.py --motion "data/cmu_bio_npy/*/*.npy" \
-    --max-frames 20 --method ls --max-iter 5 --scale-map --batch
+# 10 秒肌肉行走视频 (60fps, 网格地面, 全身)
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py --motion data/cmu_bio_npy/009/09_12.npy \
+    --max-frames 300 --render-video output/mj_muscle_walk.mp4 --render-width 1280 --render-height 960
 
-# 生成视频
-python debug/render_muscle_walk.py --motion data/cmu_bio_npy/009/09_12.npy \
-    --max-frames 240 --nframes 240 --fps 30 --video --color-act
+# 284 激活图 (热图 + 动画)
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py --motion data/cmu_bio_npy/009/09_12.npy \
+    --save-npz output/mj_traj.npz
+PYTHONPATH=. python debug/plot_activation.py --npz output/mj_traj.npz \
+    --png output/activation_heatmap.png --gif output/activation_anim.gif
+
+# 实时交互 viewer
+PYTHONPATH=. python mujoco_demo/viewer_demo/view_demo_muscles.py --loop
+
+# 偏瘫患侧强度扫描
+PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py --motion data/cmu_bio_npy/009/09_12.npy \
+    --affected-side L --strength-sweep
 ```
+
