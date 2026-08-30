@@ -100,36 +100,7 @@ PYTHONPATH=. python debug/export_traj.py --npz output/mj_traj.npz --out output/e
 PYTHONPATH=. python debug/analyze_traj.py --dir output/export
 ```
 
-## 偏瘫实验(患侧肌力强度扫描)
-
-```bash
-PYTHONPATH=. python debug/walk_muscle_demo_mujoco.py \
-    --motion data/cmu_bio_npy/009/09_12.npy --affected-side L --strength-sweep
-```
-
-> 实验结论:逐帧全知优化下,患侧肌力降到 40% 跟踪仍几乎不变(激活自动补偿)。
-> 偏瘫步态异常主要由痉挛 / 神经驱动受限等机制驱动,平台后续在此方向扩展。
-
-## Tendon 验证(并行, 不改生产)
-
-```bash
-PYTHONPATH=. python -u mujoco_demo/tendon_prototype/compare.py    # 对比报告
-PYTHONPATH=. python -u mujoco_demo/tendon_prototype/visualize.py  # 双路径可视化
-```
-
-结论:**KEEP_WAYPOINT_BACKEND**(步态 ROM 内差异 <7mm,无系统性符号反向)。
-
-## 归档(archive/)
-
-RL 训练栈、历史调试脚本、数据转换管线已移至 `archive/`(git 历史可恢复),详见 `archive/README.md`。
-
-## 关键技术点
-
 - 力矩臂口径 τ=f·r:生产 `JtA` 已含负号;MuJoCo `ten_velocity` 取负对齐。
 - MuJoCo 需 `dof_armature=0.03` 防自由关节发散;激活优化用 `lbfgs + 50` 迭代。
 - 3-DOF 关节用 `quat_to_exp_map` 转 DOF(避免 euler 的 2π 环绕)。
-
-## 历史对照
-
-- `debug/walk_muscle_demo.py`:Isaac Lab 版(1.78°,需 GPU / Isaac Sim),仅作复现凭证。
 
