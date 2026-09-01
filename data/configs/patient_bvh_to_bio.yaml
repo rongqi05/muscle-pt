@@ -1,0 +1,34 @@
+# 病人 BVH (Character1 骨架) -> BIO 骨架重定向配置
+# Character1 骨架: cm 单位, offsets 即标准 T-pose (zero rotation), 100fps
+#
+# source_length_scale 语义: 源距离(cm 数值) × scale = 目标距离(m)
+#   = cm->m (0.01) × 骨架放大 (~1.1, BIO 身高约 1.9m / 病人平均 1.7m)
+
+source_length_scale: 0.011
+
+# 源 -> 目标坐标旋转 (四元数 xyzw, 恒等)
+rotation_to_target_skeleton: [0.0, 0.0, 0.0, 1.0]
+
+# 关节映射 {Character1: BIO body 名} (RIGMESH 占位关节不映射, 自动忽略)
+joint_mapping:
+  Character1_Hips: Pelvis
+  Character1_Spine: Spine
+  Character1_Spine1: Torso
+  Character1_Neck: Neck
+  Character1_Head: Head
+  Character1_LeftShoulder: ShoulderL
+  Character1_LeftArm: ArmL
+  Character1_LeftForeArm: ForeArmL
+  Character1_LeftHand: HandL
+  Character1_RightShoulder: ShoulderR
+  Character1_RightArm: ArmR
+  Character1_RightForeArm: ForeArmR
+  Character1_RightHand: HandR
+  Character1_LeftUpLeg: FemurL
+  Character1_LeftLeg: TibiaL
+  Character1_LeftFoot: TalusL
+  Character1_LeftToeBase: FootThumbL
+  Character1_RightUpLeg: FemurR
+  Character1_RightLeg: TibiaR
+  Character1_RightFoot: TalusR
+  Character1_RightToeBase: FootThumbR

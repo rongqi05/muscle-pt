@@ -282,7 +282,8 @@ class DirectMuscleTrackerMujoco:
     def render_video(self, motion_file=None, motion=None, output="output/mj_muscle.mp4",
                      max_frames=120, method="lbfgs", max_iter=50, kp_scale=1.0,
                      muscle_scale=1.0, fps=60, width=960, height=720,
-                     show_muscles=True, muscle_radius=0.008, muscle_stride=1):
+                     show_muscles=True, muscle_radius=0.008, muscle_stride=1,
+                     pd_only=False):
         """跟踪 motion 并用 MuJoCo 离屏渲染成视频 (骨骼 + 按激活上色的肌肉线段)。
 
         高帧率由物理子步插值实现: 每 mocap 帧内有 substeps 个物理子步 (240Hz),
@@ -338,19 +339,23 @@ class DirectMuscleTrackerMujoco:
                 mujoco.mj_forward(self.model, self.data)
                 q, qd = self._read_state()
                 tau_des = torch.clip(kp * (q_ref - q) - kd * qd, -self.torque_limit, self.torque_limit)
-                body_pos, body_rot, com, jac = self._body_states_and_jac()
-                JtA, b = self.ctl.update_muscle_features(
-                    torch.from_numpy(body_pos)[None].float(),
-                    torch.from_numpy(body_rot)[None].float(),
-                    torch.from_numpy(com)[None].float(),
-                    torch.from_numpy(jac)[None].float())
-                if muscle_scale != 1.0:
-                    JtA = JtA * muscle_scale
-                    b = b * muscle_scale
-                a, tau_muscle = optimize_act(JtA, b, tau_des[None], method=method,
-                                             max_iter=max_iter, last_act=last_act)
-                a = a[0]; tau_muscle = tau_muscle[0]
-                last_act = a.detach()
+                if pd_only:
+                    a = torch.zeros(self.n_muscles)
+                    tau_muscle = tau_des
+                else:
+                    body_pos, body_rot, com, jac = self._body_states_and_jac()
+                    JtA, b = self.ctl.update_muscle_features(
+                        torch.from_numpy(body_pos)[None].float(),
+                        torch.from_numpy(body_rot)[None].float(),
+                        torch.from_numpy(com)[None].float(),
+                        torch.from_numpy(jac)[None].float())
+                    if muscle_scale != 1.0:
+                        JtA = JtA * muscle_scale
+                        b = b * muscle_scale
+                    a, tau_muscle = optimize_act(JtA, b, tau_des[None], method=method,
+                                                 max_iter=max_iter, last_act=last_act)
+                    a = a[0]; tau_muscle = tau_muscle[0]
+                    last_act = a.detach()
                 self.data.qfrc_applied[self.dof_adr] = tau_muscle.numpy()
                 self.data.ctrl[:] = 0.0
                 mujoco.mj_step(self.model, self.data)
