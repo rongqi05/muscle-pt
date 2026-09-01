@@ -49,3 +49,8 @@ data/cmu_mocap/
 MUJOCO_LOG.TXT
 # 归档目录 (本地保留, 不上传)
 archive/
+
+# 病人数据 (隐私 + 体积, 本地保留, 不上传)
+data/bvh.zip
+data/patient_bvh/
+data/patient_bio_npy/
